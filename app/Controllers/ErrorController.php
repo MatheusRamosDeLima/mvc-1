@@ -2,11 +2,15 @@
 
 namespace App\Controllers;
 
-class ErrorController {
+use App\Core\Controller;
+
+class ErrorController extends Controller {
     public function error404() {
-        echo "Page not found. Please back to <a href='/'>home page</a>";
+        $this->viewTitle = 'Error 404';
+        $this->view('Error/error404');
     }
     public function error405() {
-        echo "The requested method isn't allowed";
+        $this->viewTitle = 'Error 405';
+        $this->view('Error/error405');
     }
 }
