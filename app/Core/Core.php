@@ -14,12 +14,12 @@ class Core {
     public static function dispath(array $routes):void {
         $url = self::parseUrl();
         $isRouteFound = false;
-        foreach($routes as $route) {
+        foreach ($routes as $route) {
             $pattern = '#^'.preg_replace('/{id}/', '([\w-]+)', trim($route['path'], '/')).'$#';
-            if(preg_match($pattern, $url, $matches)) {
+            if (preg_match($pattern, $url, $matches)) {
                 $isRouteFound = true;
                 array_shift($matches);
-                if($route['method'] !== Request::method()) self::invalidHttpMethod();
+                if ($route['method'] !== Request::method()) self::invalidHttpMethod();
                 else {
                     list(self::$controller, self::$method) = $route['action'];
                     self::$params = $matches;

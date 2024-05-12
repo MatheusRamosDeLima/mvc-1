@@ -3,19 +3,25 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Utils\View;
 
 class NewsController extends Controller {
     public function index() {
-        $this->viewTitle = 'All news';
-        $this->viewWithTemplate('News/index');
+        $view = new View('News/index', 'All news', 'News/index');
+        $this->viewWithTemplate($view);
     }
+
     public function category(string $categoryName) {
-        $this->viewTitle = "News about $categoryName";
-        $this->viewWithTemplate('News/category', ['categoryName' => $categoryName]);
+        $categoryName = str_replace('-', ' ', $categoryName);
+
+        $view = new View('News/category', "News about $categoryName");
+        $this->viewWithTemplate($view, ['categoryName' => $categoryName]);
     }
+
     public function get(string $newsId) {
-        $newsName = ucfirst($newsId);
-        $this->viewTitle = "$newsName";
-        $this->viewWithTemplate('News/get', ['newsName' => $newsName]);
+        $newsName = str_replace('-', ' ', ucfirst($newsId));
+
+        $view = new View('News/get', "$newsName");
+        $this->viewWithTemplate($view, ['newsName' => $newsName]);
     }
 }
