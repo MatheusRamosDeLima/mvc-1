@@ -5,6 +5,7 @@
         }
     },
     "routes": [
+        { "src": "/(css|js)/(.*)",  "dest": "/public/(css|js)/(.*)" },
         { "src": "/(.*)",  "dest": "/api/index.php" }
     ]
 }
