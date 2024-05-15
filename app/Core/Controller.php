@@ -3,20 +3,25 @@
 namespace App\Core;
 
 use App\Utils\View;
-use PDO;
-use mysqli;
 
 class Controller {
-    protected $modelData;
+    protected array $modelData;
     protected View $view;
 
-    protected function view(string $viewName, $modelData = []):void {
+    protected function view(string $viewName, array $modelData = []):void {
         $this->modelData = $modelData;
         extract($modelData);
         require_once __DIR__."/../Views/$viewName.php";
     }
-    protected function viewWithTemplate(View $view, $modelData = []):void {
+    protected function viewWithTemplate(View $view, array $modelData = []):void {
         $this->view = $view;
         require_once __DIR__."/../Views/template.php";
+    }
+
+    public function error404() {
+        $this->view('Error/error404');
+    }
+    public function error405() {
+        $this->view('Error/error405');
     }
 }

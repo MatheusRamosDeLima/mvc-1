@@ -4,7 +4,7 @@ namespace App\Core;
 
 use App\Http\Request;
 use App\Http\Response;
-use App\Controllers\ErrorController;
+use App\Core\Controller;
 
 class Core {
     private static string $controller;
@@ -38,13 +38,13 @@ class Core {
     }
     private static function invalidHttpMethod():void {
         Response::json([], 405);
-        self::$controller = ErrorController::class;
+        self::$controller = Controller::class;
         self::$method = 'error405';
         self::$params = [];
     }
     private static function invalidRoute():void {
         Response::json([], 404);
-        self::$controller = ErrorController::class;
+        self::$controller = Controller::class;
         self::$method = 'error404';
         self::$params = [];
     }
