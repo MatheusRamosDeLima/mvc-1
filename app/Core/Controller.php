@@ -18,10 +18,10 @@ class Controller {
         require_once __DIR__."/../Views/template.php";
     }
 
-    public function error404() {
+    public function error404():void {
         $this->view('Error/error404');
     }
-    public function error405() {
+    public function error405():void {
         $this->view('Error/error405');
     }
 }

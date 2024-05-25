@@ -9,6 +9,5 @@ class HomeController extends Controller {
     public function index() {
         $view = new View('home', 'Home');
         $this->viewWithTemplate($view);
-        return;
     }
 }

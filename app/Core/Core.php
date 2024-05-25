@@ -12,7 +12,7 @@ class Core {
     private static array $params;
 
     public static function dispath(array $routes):void {
-        $url = self::parseUrl();
+        $url = self::parseUrl(Request::uri());
         $isRouteFound = false;
         foreach ($routes as $route) {
             $pattern = '#^'.preg_replace('/{id}/', '([\w-]+)', trim($route['path'], '/')).'$#';
@@ -29,8 +29,8 @@ class Core {
         if (!$isRouteFound) self::invalidRoute();
         call_user_func_array([new self::$controller, self::$method], self::$params);
     }
-    private static function parseUrl():string {
-        $url = trim($_SERVER['REQUEST_URI'], '/');
+    private static function parseUrl(string $uri):string {
+        $url = trim($uri, '/');
         if ($url === 'index.php') $url = '';
         else if (str_starts_with($url, 'index.php/')) $url = substr($url, strlen('index.php/'));
         if (str_contains($url, '?')) $url = substr($url, 0, strpos($url, '?'));

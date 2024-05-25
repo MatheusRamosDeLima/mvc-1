@@ -23,7 +23,6 @@ class BlogController extends Controller {
                 return $this->db->getObject('categories', $post->categoryid)->name;
             }
         ]);
-        return;
     }
 
     public function category(string $categoryName) {
@@ -40,10 +39,8 @@ class BlogController extends Controller {
                 'doesPostsExist' => $doesPostsExist,
                 'posts' => $categoryPosts
             ]);
-            return;
         }
-        $this->error404();
-        return;
+        else $this->error404();
     }
 
     public function get(string $postId) {
@@ -57,9 +54,7 @@ class BlogController extends Controller {
                 'postContent' => $post->content,
                 'postCategory' => $this->db->getObject('categories', $post->categoryid)->name
             ]);
-            return;
         }
-        $this->error404();
-        return;
+        else $this->error404();
     }
 }
