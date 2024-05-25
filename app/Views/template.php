@@ -7,6 +7,9 @@
     <?php if($view->getCss() !== null): ?>
         <link rel="stylesheet" href="/css/<?= $view->getCss() ?>.css">
     <?php endif ?>
+    <?php if($view->getJs() !== null): ?>
+        <script src="/js/<?= $view->getJs() ?>.js" defer></script>
+    <?php endif ?>
     <title><?= $view->getTitle() ?></title>
 </head>
 <body>

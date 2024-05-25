@@ -7,7 +7,7 @@ use App\Utils\View;
 
 class HomeController extends Controller {
     public function index() {
-        $view = new View('home', 'Home', 'home');
+        $view = new View('home', 'Home');
         $this->viewWithTemplate($view);
         return;
     }

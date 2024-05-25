@@ -15,7 +15,7 @@ class BlogController extends Controller {
         $categories = $this->db->getAll('categories');
         $posts = $this->db->getAll('posts');
 
-        $view = new View('Blog/index', 'All posts', 'Blog/index');
+        $view = new View('Blog/index', 'All posts');
         $this->viewWithTemplate($view, [
             'categories' => $categories,
             'posts' => $posts,
