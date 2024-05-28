@@ -20,7 +20,7 @@ class BlogController extends Controller {
             'categories' => $categories,
             'posts' => $posts,
             'postCategory' => function($post) {
-                return $this->db->getObject('categories', $post->categoryid)->name;
+                return $this->db->getObject('categories', 'id', $post->categoryid)->name;
             }
         ]);
     }
@@ -28,15 +28,12 @@ class BlogController extends Controller {
     public function category(string $categoryName) {
         $this->db = new BlogModel;
 
-        $category = $this->db->getObject('categories', $categoryName, 'name');
+        $category = $this->db->getObject('categories', 'name', $categoryName);
         if ($category) {
-            $doesPostsExist = false;
-            $categoryPosts = $this->db->getArray('posts', $category->id, 'categoryid');
-            if ($categoryPosts) $doesPostsExist = true;
+            $categoryPosts = $this->db->getArray('posts', 'categoryid', $category->id);
             $view = new View('Blog/category', "Posts about $categoryName");
             $this->viewWithTemplate($view, [
                 'categoryName' => $categoryName,
-                'doesPostsExist' => $doesPostsExist,
                 'posts' => $categoryPosts
             ]);
         }
@@ -46,13 +43,13 @@ class BlogController extends Controller {
     public function get(string $postId) {
         $this->db = new BlogModel;
 
-        $post = $this->db->getObject('posts', $postId);
+        $post = $this->db->getObject('posts', 'id', $postId);
         if ($post) {
             $view = new View('Blog/get', "$post->name");
             $this->viewWithTemplate($view, [
                 'postName' => $post->name,
                 'postContent' => $post->content,
-                'postCategory' => $this->db->getObject('categories', $post->categoryid)->name
+                'postCategory' => $this->db->getObject('categories', 'id', $post->categoryid)->name
             ]);
         }
         else $this->error404();

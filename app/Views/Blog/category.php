@@ -1,6 +1,6 @@
 <h1>Posts about <span class="category-name"><?= $categoryName ?></span></h1>
 <section class="posts">
-    <?php if ($doesPostsExist): ?>
+    <?php if ($posts): ?>
         <?php foreach ($posts as $post): ?>
             <a href="/blog/post/<?= $post->id ?>" class="post">
                 <h2><?= $post->name ?></h2>
@@ -8,7 +8,7 @@
             </a>
         <?php endforeach ?>
     <?php endif ?>
-    <?php if (!$doesPostsExist): ?>
+    <?php if (!$posts): ?>
         <div class="empty-category">
             <span>The <?= $categoryName ?> category is empty!</span>
         </div>

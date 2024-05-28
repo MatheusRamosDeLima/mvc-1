@@ -13,12 +13,14 @@ class BlogModel extends Connection {
         $query = self::$instance->query("SELECT * FROM $table");
         return $query->fetchAll();
     }
-    public function getArray(string $table, string $row, string $column):array|false {
-        $query = self::$instance->query("SELECT * FROM $table WHERE $column='$row'");
-        return $query->fetchAll();
+    public function getArray(string $table, string $column, string $row):array|false {
+        $prepare = self::$instance->prepare("SELECT * FROM $table WHERE $column=:row");
+        $prepare->execute([":row" => $row]);
+        return $prepare->fetchAll();
     }
-    public function getObject(string $table, string $row, string $column = 'id'):stdClass|null|false {
-        $query = self::$instance->query("SELECT * FROM $table WHERE $column='$row'");
-        return $query->fetchObject();
+    public function getObject(string $table, string $column, string $row):stdClass|null|false {
+        $prepare = self::$instance->prepare("SELECT * FROM $table WHERE $column=:row");
+        $prepare->execute([":row" => $row]);
+        return $prepare->fetchObject();
     }
 }
