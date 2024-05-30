@@ -31,9 +31,9 @@ class Core {
     }
     private static function parseUrl(string $uri):string {
         $url = trim($uri, '/');
-        if ($url === 'index.php') $url = '';
-        else if (str_starts_with($url, 'index.php/')) $url = substr($url, strlen('index.php/'));
         if (str_contains($url, '?')) $url = substr($url, 0, strpos($url, '?'));
+        if ($url === 'index.php') $url = '';
+        $url = filter_var($url, FILTER_SANITIZE_URL);
         return $url;
     }
     private static function invalidHttpMethod():void {
