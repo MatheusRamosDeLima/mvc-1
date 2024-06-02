@@ -15,7 +15,7 @@ class Controller {
     }
     protected function viewWithTemplate(View $view, array $modelData = []):void {
         $this->view = $view;
-        require_once __DIR__."/../Views/template.php";
+        require_once __DIR__."/../Views/_template.php";
     }
 
     public function error404():void {
