@@ -9,28 +9,39 @@ class Route {
         self::$routes[] = [
             'path' => $path,
             'action' => $action,
-            'method' => 'GET'
+            'method' => 'get'
         ];
     }
     public static function post(string $path, array $action):void {
         self::$routes[] = [
             'path' => $path,
             'action' => $action,
-            'method' => 'POST'
+            'method' => 'post'
         ];
     }
     public static function put(string $path, array $action):void {
         self::$routes[] = [
             'path' => $path,
             'action' => $action,
-            'method' => 'PUT'
+            'method' => 'put'
         ];
     }
     public static function delete(string $path, array $action):void {
         self::$routes[] = [
             'path' => $path,
             'action' => $action,
-            'method' => 'DELETE'
+            'method' => 'delete'
+        ];
+    }
+    public static function match(array $methods, string $path, array $action):void {
+        for ($i = 0; $i < count($methods); $i++) {
+            $methods[$i] = strtolower($methods[$i]);
+        }
+
+        self::$routes[] = [
+            'path' => $path,
+            'action' => $action,
+            'method' => $methods
         ];
     }
 

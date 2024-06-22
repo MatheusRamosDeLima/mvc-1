@@ -7,6 +7,6 @@ class Request {
         return $_SERVER['REQUEST_URI'];
     }
     public static function method():string {
-        return $_SERVER['REQUEST_METHOD'];
+        return strtolower($_SERVER['REQUEST_METHOD']);
     }
 }
