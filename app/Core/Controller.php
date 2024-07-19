@@ -3,6 +3,7 @@
 namespace App\Core;
 
 use App\Utils\View;
+use App\Http\Response;
 
 class Controller {
     protected array $modelData;
@@ -19,9 +20,11 @@ class Controller {
     }
 
     public function error404():void {
+        Response::json([], 404);
         $this->view('Error/error404');
     }
     public function error405():void {
+        Response::json([], 405);
         $this->view('Error/error405');
     }
 }
