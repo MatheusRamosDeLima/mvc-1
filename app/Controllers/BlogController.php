@@ -4,54 +4,64 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Utils\View;
-use App\Models\BlogModel;
+
+use App\Models\Categories;
+use App\Models\Posts;
 
 class BlogController extends Controller {
-    private BlogModel $db;
+    public function __construct() {
+        Categories::init();
+        Posts::init();
+    }
 
     public function index() {
-        $this->db = new BlogModel;
-
-        $categories = $this->db->getAll('categories');
-        $posts = $this->db->getAll('posts');
+        $categories = Categories::selectAll();
+        $posts = Posts::selectAll();
 
         $view = new View('Blog/index', 'All posts');
         $this->viewWithTemplate($view, [
             'categories' => $categories,
             'posts' => $posts,
             'postCategory' => function($post) {
-                return $this->db->getObject('categories', 'id', $post->categoryid)->name;
+                return Categories::selectOneByColumn('id', $post->categoryid)->name;
             }
         ]);
     }
 
     public function category(string $categoryName) {
-        $this->db = new BlogModel;
+        $category = Categories::selectOneByColumn('name', $categoryName);
 
-        $category = $this->db->getObject('categories', 'name', $categoryName);
-        if ($category) {
-            $categoryPosts = $this->db->getArray('posts', 'categoryid', $category->id);
-            $view = new View('Blog/category', "Posts about $categoryName");
-            $this->viewWithTemplate($view, [
-                'categoryName' => $categoryName,
-                'posts' => $categoryPosts
-            ]);
+        if (!$category) {
+            $this->error404();
+            return;
         }
-        else $this->error404();
+
+        $allPostsByCategory = Posts::selectManyByColumn('categoryid', $category->id);
+
+        $view = new View('Blog/category', "Posts about $categoryName");
+        $this->viewWithTemplate($view, [
+            'categoryName' => $categoryName,
+            'posts' => $allPostsByCategory
+        ]);
     }
 
     public function get(string $postId) {
-        $this->db = new BlogModel;
+        $post = Posts::selectOneByColumn('id', $postId);
 
-        $post = $this->db->getObject('posts', 'id', $postId);
-        if ($post) {
-            $view = new View('Blog/get', "$post->name");
-            $this->viewWithTemplate($view, [
-                'postName' => $post->name,
-                'postContent' => $post->content,
-                'postCategory' => $this->db->getObject('categories', 'id', $post->categoryid)->name
-            ]);
+        if (!$post) {
+            $this->error404();
+            return;
         }
-        else $this->error404();
+        
+        $view = new View('Blog/get', "$post->name");
+        $this->viewWithTemplate($view, [
+            'postName' => $post->name,
+            'postContent' => $post->content,
+            'postCategory' => Categories::selectOneByColumn('id', $post->categoryid)->name
+        ]);
+    }
+
+    public function create() {
+        
     }
 }
