@@ -6,4 +6,4 @@ require_once __DIR__."/../app/web/routes.php";
 use App\Core\Core;
 use App\Http\Route;
 
-Core::dispath(Route::getRoutes());
+Core::start(Route::getRoutes());

@@ -10,16 +10,28 @@ class Core {
     private static string $method;
     private static array $params;
 
-    public static function dispath(array $routes): void {
+    public static function start(array $routes): void {
         $url = self::parseUrl(Request::uri());
 
-        $isRouteFound = false;
+        $dispatch = self::dispatch($url, $routes);
+        if (!$dispatch) self::invalidRoute();
 
+        call_user_func_array([new self::$controller, self::$method], self::$params);
+    }
+
+    private static function parseUrl(string $uri): string {
+        $url = trim($uri, '/');
+        if (str_contains($url, '?')) $url = substr($url, 0, strpos($url, '?'));
+        if ($url === 'index.php') $url = '';
+        $url = filter_var($url, FILTER_SANITIZE_URL);
+        return $url;
+    }
+
+    private static function dispatch(string $url, array $routes) {
+        $isRouteFound = false;
         foreach ($routes as $route) {
             $pattern = '#^'.preg_replace('/{id}/', '([\w-]+)', trim($route['path'], '/')).'$#';
             if (preg_match($pattern, $url, $matches)) {
-                $isRouteFound = true;
-
                 array_shift($matches);
 
                 $isMethodAllowed = self::isMethodAllowed($route);
@@ -30,18 +42,14 @@ class Core {
                     list(self::$controller, self::$method) = $route['action'];
                     self::$params = $matches;
                 }
+
+                $isRouteFound = true;
             }
         }
-        if (!$isRouteFound) self::invalidRoute();
-        call_user_func_array([new self::$controller, self::$method], self::$params);
+
+        return $isRouteFound;
     }
-    private static function parseUrl(string $uri): string {
-        $url = trim($uri, '/');
-        if (str_contains($url, '?')) $url = substr($url, 0, strpos($url, '?'));
-        if ($url === 'index.php') $url = '';
-        $url = filter_var($url, FILTER_SANITIZE_URL);
-        return $url;
-    }
+
     private static function isMethodAllowed(array $route): bool {
         $isMethodAllowed = false;
 
@@ -55,6 +63,7 @@ class Core {
 
         return $isMethodAllowed;
     }
+
     private static function invalidRoute(): void {
         self::$controller = Controller::class;
         self::$method = 'error404';
