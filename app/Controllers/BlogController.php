@@ -5,59 +5,52 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Utils\View;
 
-use App\Models\Categories;
 use App\Models\Posts;
 
 class BlogController extends Controller {
     public function __construct() {
-        Categories::init();
         Posts::init();
     }
 
     public function index() {
-        $categories = Categories::selectAll();
+        $categories = Posts::selectDistinctValuesByColumn('category');
         $posts = Posts::selectAll();
 
         $view = new View('Blog/index', 'All posts');
         $this->viewWithTemplate($view, [
             'categories' => $categories,
-            'posts' => $posts,
-            'postCategory' => function($post) {
-                return Categories::selectOneByColumn('id', $post->categoryid)->name;
-            }
+            'posts' => $posts
         ]);
     }
 
-    public function category(string $categoryName) {
-        $category = Categories::selectOneByColumn('name', $categoryName);
-
-        if (!$category) {
+    public function category(string $category) {
+        $postsByCategory = Posts::selectManyByColumn('category', $category);
+        
+        if (!$postsByCategory) {
             $this->error404();
             return;
         }
-
-        $allPostsByCategory = Posts::selectManyByColumn('categoryid', $category->id);
-
-        $view = new View('Blog/category', "Posts about $categoryName");
+        
+        $view = new View('Blog/category', "Posts about $category");
         $this->viewWithTemplate($view, [
-            'categoryName' => $categoryName,
-            'posts' => $allPostsByCategory
+            'category' => $category,
+            'posts' => $postsByCategory
         ]);
     }
 
     public function get(string $postId) {
-        $post = Posts::selectOneByColumn('id', $postId);
+        $post = Posts::selectOneByColumn('rowid', $postId);
 
         if (!$post) {
             $this->error404();
             return;
         }
         
-        $view = new View('Blog/get', "$post->name");
+        $view = new View('Blog/get', "$post->title");
         $this->viewWithTemplate($view, [
-            'postName' => $post->name,
-            'postContent' => $post->content,
-            'postCategory' => Categories::selectOneByColumn('id', $post->categoryid)->name
+            'postTitle' => $post->title,
+            'postContent' => $post->main,
+            'postCategory' => $post->category
         ]);
     }
 

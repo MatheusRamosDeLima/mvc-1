@@ -1,3 +1,3 @@
-<h1><?= $postName ?></h1>
+<h1><?= $postTitle ?></h1>
 <span><?= $postCategory ?></span>
 <p><?= $postContent ?></p>
