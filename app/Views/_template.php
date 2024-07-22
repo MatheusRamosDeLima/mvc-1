@@ -37,7 +37,7 @@
         </nav>
     </header>
     <main>
-        <?php $this->view($view->getName(), $modelData) ?>
+        <?php $this->view($view->getPath(), $modelData) ?>
     </main>
     <footer>
         <p>Copyright...</p>
