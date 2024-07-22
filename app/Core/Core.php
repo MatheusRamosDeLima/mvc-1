@@ -28,7 +28,7 @@ class Core {
     }
 
     private static function dispatch(string $url, array $routes) {
-        $isRouteFound = false;
+        $isMethodAllowed = false;
         foreach ($routes as $route) {
             $pattern = '#^'.preg_replace('/{id}/', '([\w-]+)', trim($route['path'], '/')).'$#';
             if (preg_match($pattern, $url, $matches)) {
@@ -36,18 +36,18 @@ class Core {
 
                 $isMethodAllowed = self::isMethodAllowed($route);
 
-                if (!$isMethodAllowed) {
-                    self::invalidHttpMethod();
-                } else {
+                if ($isMethodAllowed) {
                     list(self::$controller, self::$method) = $route['action'];
                     self::$params = $matches;
-                }
 
-                $isRouteFound = true;
+                    return true;
+                }
             }
         }
-
-        return $isRouteFound;
+        if (!$isMethodAllowed) {
+            self::invalidHttpMethod();
+        }
+        return false;
     }
 
     private static function isMethodAllowed(array $route): bool {
