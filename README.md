@@ -1,1 +1,3 @@
-# mvc-composer
+# MVC - 1
+Este projeto é uma espécie de framework MVC básico puro (total ausência de libs). O intuito deste projeto é auxiliar iniciantes na área da web no entendimento essencial da estrutura MVC e de práticas comuns como o uso da PSR-4, namespaces, rotas definidas para qualquer método http e outros. Portanto, esse projeto irá cumprir uma boa execução da estrutura MVC que possui fácil entendimento aliado de boas práticas.
+O mvc-1 é o "próximo passo" do mvc-0 (também localizado nesta mesma conta).
