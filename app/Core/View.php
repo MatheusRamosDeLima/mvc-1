@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Utils;
+namespace App\Core;
 
 class View {
     private string $path, $title;
-    private string|array|null $css = null, $js = null;
+    private string|array|null $css, $js;
 
     public function __construct(string $path, string $title, string|array|null $css = null, string|array|null $js = null) {
         $this->path = $path;

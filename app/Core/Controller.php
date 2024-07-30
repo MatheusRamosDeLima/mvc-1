@@ -2,8 +2,8 @@
 
 namespace App\Core;
 
-use App\Utils\View;
 use App\Http\Response;
+use App\Core\View;
 
 class Controller {
     protected array $modelData;

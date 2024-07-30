@@ -3,18 +3,20 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
-use App\Utils\View;
+use App\Core\View;
 
 use App\Models\Posts;
 
 class BlogController extends Controller {
+    private $posts;
+
     public function __construct() {
-        Posts::init();
+        $this->posts = new Posts;
     }
 
     public function index() {
-        $categories = Posts::selectDistinctValuesByColumn('category');
-        $posts = Posts::selectAll();
+        $categories = $this->posts->selectDistinctValuesByColumn('category');
+        $posts = $this->posts->selectAll();
 
         $view = new View('Blog/index', 'All posts');
         $this->viewWithTemplate($view, [
@@ -24,7 +26,7 @@ class BlogController extends Controller {
     }
 
     public function category(string $category) {
-        $postsByCategory = Posts::selectManyByColumn('category', $category);
+        $postsByCategory = $this->posts->selectManyByColumn('category', $category);
         
         if (!$postsByCategory) {
             $this->error404();
@@ -38,14 +40,13 @@ class BlogController extends Controller {
         ]);
     }
 
-    public function show(string $postId) {
-        if (!is_numeric($postId)) {
+    public function show(string $id) {
+        if (!is_numeric($id)) {
             $this->error404();
             return;
         }
-        $postId = (int) ($postId);
 
-        $post = Posts::selectById($postId);
+        $post = $this->posts->selectById($id);
 
         if (!$post) {
             $this->error404();
@@ -80,7 +81,7 @@ class BlogController extends Controller {
         $content = $_POST['content'];
         $category = $_POST['category'];
 
-        $postCreated = Posts::insert($title, $content, $category);
+        $postCreated = $this->posts->insert([$title, $content, $category]);
 
         if (!$postCreated) {
             $this->error400("Post wasn't created. Some error happened :(");
@@ -90,14 +91,13 @@ class BlogController extends Controller {
         header('Location: /blog');
     }
 
-    public function edit(string $postId) {
-        if (!is_numeric($postId)) {
+    public function edit(string $id) {
+        if (!is_numeric($id)) {
             $this->error404();
             return;
         }
-        $postId = (int) ($postId);
 
-        $post = Posts::selectById($postId);
+        $post = $this->posts->selectById($id);
 
         if (!$post) {
             $this->error404();
@@ -108,51 +108,39 @@ class BlogController extends Controller {
         $this->viewWithTemplate($view, ['post' => $post]);
     }
 
-    public function update(string $postId) {
-        if (empty($_POST['update'])) {
+    public function update(string $id) {
+        if (empty($_POST['update']) || !is_numeric($id)) {
             $this->error400();
             return;
         }
 
         if (empty($_POST['title']) || empty($_POST['content']) || empty($_POST['category'])) {
-            $this->edit($postId);
+            $this->edit($id);
             echo "<p>Complete as informações corretamente.</p>";
             return;
         }
-
-        if (!is_numeric($postId)) {
-            $this->error400();
-            return;
-        }
-        $postId = (int) ($postId);
 
         $title = $_POST['title'];
         $content = $_POST['content'];
         $category = $_POST['category'];
 
-        $postEdited = Posts::update($postId, $title, $content, $category);
+        $postEdited = $this->posts->update($id, [$title, $content, $category]);
 
         if (!$postEdited) {
             $this->error400();
             return;
         }
 
-        header("Location: /blog/post/$postId");
+        header("Location: /blog/post/$id");
     }
 
-    public function destroy(string $postId) {
-        if (empty($_POST['destroy'])) {
+    public function destroy(string $id) {
+        if (empty($_POST['destroy']) || !is_numeric($id)) {
             $this->error400();
             return;
         }
-        
-        if (!is_numeric($postId)) {
-            $this->error404();
-            return;
-        }
-        $postId = (int) ($postId);
 
-        $postDeleted = Posts::delete($postId);
+        $postDeleted = $this->posts->delete($id);
 
         if (!$postDeleted) {
             $this->error400();
