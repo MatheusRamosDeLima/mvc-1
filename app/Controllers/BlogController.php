@@ -15,8 +15,8 @@ class BlogController extends Controller {
     }
 
     public function index() {
-        $categories = $this->posts->selectDistinctValuesByColumn('category');
-        $posts = $this->posts->selectAll();
+        $categories = $this->posts::selectDistinctValuesByColumn('category');
+        $posts = $this->posts::selectAll();
 
         $view = new View('Blog/index', 'All posts');
         $this->viewWithTemplate($view, [
@@ -26,7 +26,7 @@ class BlogController extends Controller {
     }
 
     public function category(string $category) {
-        $postsByCategory = $this->posts->selectManyByColumn('category', $category);
+        $postsByCategory = $this->posts::selectManyByColumn('category', $category);
         
         if (!$postsByCategory) {
             $this->error404();
@@ -46,7 +46,7 @@ class BlogController extends Controller {
             return;
         }
 
-        $post = $this->posts->selectById($id);
+        $post = $this->posts::selectById($id);
 
         if (!$post) {
             $this->error404();
@@ -62,18 +62,13 @@ class BlogController extends Controller {
     }
 
     public function create() {
-        $view = new View('Blog/create', "Create post");
+        $view = new View('Blog/create', "Create post", null, 'Blog/_form');
         $this->viewWithTemplate($view);
     }
 
     public function store() {
-        if (empty($_POST['store'])) {
-            $this->error400("Post can't be created.");
-            return;
-        }
         if (empty($_POST['title']) || empty($_POST['content']) || empty($_POST['category'])) {
-            $this->create();
-            echo "<p>Complete as informações corretamente.</p>";
+            header('Location: /blog/create');
             return;
         }
 
@@ -81,7 +76,7 @@ class BlogController extends Controller {
         $content = $_POST['content'];
         $category = $_POST['category'];
 
-        $postCreated = $this->posts->insert([$title, $content, $category]);
+        $postCreated = $this->posts::insert([$title, $content, $category]);
 
         if (!$postCreated) {
             $this->error400("Post wasn't created. Some error happened :(");
@@ -97,26 +92,25 @@ class BlogController extends Controller {
             return;
         }
 
-        $post = $this->posts->selectById($id);
+        $post = $this->posts::selectById($id);
 
         if (!$post) {
             $this->error404();
             return;
         }
 
-        $view = new View('Blog/edit', 'Edit post');
+        $view = new View('Blog/edit', 'Edit post', null, 'Blog/_form');
         $this->viewWithTemplate($view, ['post' => $post]);
     }
 
     public function update(string $id) {
-        if (empty($_POST['update']) || !is_numeric($id)) {
+        if (!is_numeric($id)) {
             $this->error400();
             return;
         }
 
         if (empty($_POST['title']) || empty($_POST['content']) || empty($_POST['category'])) {
-            $this->edit($id);
-            echo "<p>Complete as informações corretamente.</p>";
+            header('Location: /blog/edit');
             return;
         }
 
@@ -124,14 +118,14 @@ class BlogController extends Controller {
         $content = $_POST['content'];
         $category = $_POST['category'];
 
-        $postEdited = $this->posts->update($id, [$title, $content, $category]);
+        $postEdited = $this->posts::update($id, [$title, $content, $category]);
 
         if (!$postEdited) {
             $this->error400();
             return;
         }
 
-        header("Location: /blog/post/$id");
+        header("Location: /blog");
     }
 
     public function destroy(string $id) {
@@ -140,7 +134,7 @@ class BlogController extends Controller {
             return;
         }
 
-        $postDeleted = $this->posts->delete($id);
+        $postDeleted = $this->posts::delete($id);
 
         if (!$postDeleted) {
             $this->error400();

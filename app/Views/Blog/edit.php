@@ -18,8 +18,9 @@
             </select>
         </div>
     </div>
-    <input type="submit" name="update" value="Edit">
+    <input type="submit" onclick="validate(); return canContinue;" value="Edit">
 </form>
+<div id="data-error"></div>
 <script defer>
     const selectCategory = document.getElementById("select-category");
     const categoryOptions = selectCategory.getElementsByTagName("option");

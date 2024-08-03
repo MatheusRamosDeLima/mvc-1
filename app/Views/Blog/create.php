@@ -18,5 +18,6 @@
             </select>
         </div>
     </div>
-    <input type="submit" name="store" value="Create">
+    <input type="submit" onclick="validate(); return canContinue;" value="Create">
 </form>
+<div id="data-error"></div>
