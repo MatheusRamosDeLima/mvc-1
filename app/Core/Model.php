@@ -10,13 +10,13 @@ abstract class Model {
     private static \PDO $connection;
 
     protected static string $table;
-    protected static array $columns;
+    protected static array $fields;
 
-    protected static function init(string $table, array $columns): void {
+    protected static function init(string $table, array $fields): void {
         self::$connection = Connection::getInstance('blog');
 
         self::$table = $table;
-        self::$columns = $columns;
+        self::$fields = $fields;
     }
 
     public static function selectAll(): array|false {
@@ -28,39 +28,39 @@ abstract class Model {
         $query->execute([':id' => $id]);
         return $query->fetchObject();
     }
-    public static function selectOneByColumn(string $column, string $row): \stdClass|null|false {
-        $query = self::$connection->prepare("SELECT rowid, * FROM ".self::$table." WHERE $column=:row");
-        $query->execute([":row" => $row]);
+    public static function selectOneByField(string $field, string $value): \stdClass|null|false {
+        $query = self::$connection->prepare("SELECT rowid, * FROM ".self::$table." WHERE $field=:value");
+        $query->execute([":value" => $value]);
         return $query->fetchObject();
     }
-    public static function selectManyByColumn(string $column, string $row): array|false {
-        $query = self::$connection->prepare("SELECT rowid, * FROM ".self::$table." WHERE $column=:row");
-        $query->execute([":row" => $row]);
+    public static function selectManyByField(string $field, string $value): array|false {
+        $query = self::$connection->prepare("SELECT rowid, * FROM ".self::$table." WHERE $field=:value");
+        $query->execute([":value" => $value]);
         return $query->fetchAll();
     }
-    public static function selectDistinctValuesByColumn(string $column): array|false {
-        $query = self::$connection->query("SELECT DISTINCT $column FROM ".self::$table);
-        $values = $query->fetchAll();
+    public static function selectColumn(string $field): array|false {
+        $query = self::$connection->query("SELECT DISTINCT $field FROM ".self::$table);
+        $column = $query->fetchAll();
 
-        if (!$values) return false;
+        if (!$column) return false;
 
-        $newValues = [];
-        foreach ($values as $value) $newValues[] = $value->$column;
+        $newColumn = [];
+        foreach ($column as $value) $newColumn[] = $value->$field;
 
-        return $newValues;
+        return $newColumn;
     }
-    public static function insert(array $rows): bool {
-        $columnsSet = PdoQuery::insertColumnsSet(self::$columns);
-        $rowsSet = PdoQuery::insertRowsSet(self::$columns);
-        $execArray = PdoQuery::execArray(self::$columns, $rows);
+    public static function insert(array $values): bool {
+        $fieldsSet = PdoQuery::insertFieldsSet(self::$fields);
+        $valuesSet = PdoQuery::insertValuesSet(self::$fields);
+        $execArray = PdoQuery::execArray(self::$fields, $values);
 
-        $query = self::$connection->prepare("INSERT INTO ".self::$table." $columnsSet VALUES $rowsSet");
+        $query = self::$connection->prepare("INSERT INTO ".self::$table." $fieldsSet VALUES $valuesSet");
         $exec = $query->execute($execArray);
         return $exec;
     }
-    public static function update(string $id, array $rows) {
-        $updateSet = PdoQuery::updateSet(self::$columns);
-        $execArray = PdoQuery::execArray(self::$columns, $rows);
+    public static function update(string $id, array $values) {
+        $updateSet = PdoQuery::updateSet(self::$fields);
+        $execArray = PdoQuery::execArray(self::$fields, $values);
         $execArray[':id'] = $id;
         
         $query = self::$connection->prepare("UPDATE ".self::$table." SET $updateSet WHERE rowid = :id");

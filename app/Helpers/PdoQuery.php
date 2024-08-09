@@ -3,88 +3,88 @@
 namespace App\Helpers;
 
 class PdoQuery {
-    public static function insertColumnsSet(array $columns): string {
+    public static function insertFieldsSet(array $fields): string {
         /*
         query = "INSERT INTO Table
-        ('column1', 'column2', 'column3', 'column4' ...)
+        ('field1', 'field2', 'field3', 'field4' ...)
         VALUES
-        (:column1, :column2, :column3, :column4, ...)"
+        (:field1, :field2, :field3, :field4, ...)"
 
         after help:
 
         query = "INSERT INTO Table
-        $columnsSet
+        $fieldsSet
         VALUES
-        (:column1, :column2, :column3, :column4, ...)"
+        (:field1, :field2, :field3, :field4, ...)"
         */
 
-        $columnsSet = '(';
-        for ($i = 0; $i < count($columns); $i++) {
-            if ($i === 0) $columnsSet .= "'{$columns[$i]}'";
-            else $columnsSet .= ", '{$columns[$i]}'";
+        $fieldsSet = '(';
+        for ($i = 0; $i < count($fields); $i++) {
+            if ($i === 0) $fieldsSet .= "'{$fields[$i]}'";
+            else $fieldsSet .= ", '{$fields[$i]}'";
         }
-        $columnsSet .= ')';
-        return $columnsSet;
+        $fieldsSet .= ')';
+        return $fieldsSet;
         
-        // $columnsSet = " ('column1', 'column2', ...) "
+        // $fieldsSet = " ('field1', 'field2', ...) "
     }
-    public static function insertRowsSet(array $columns): string {
+    public static function insertValuesSet(array $fields): string {
         /*
         query = "INSERT INTO Table 
-        ('column1', 'column2', 'column3', 'column4', ...)
+        ('field1', 'field2', 'field3', 'field4', ...)
         VALUES
-        (:column1, :column2, :column3, :column4, ...)"
+        (:field1, :field2, :field3, :field4, ...)"
 
         after help:
 
         query = "INSERT INTO Table
-        ('column1', 'column2', 'column3', 'column4', ...)
+        ('field1', 'field2', 'field3', 'field4', ...)
         VALUES
-        $rowsSet"
+        $valuesSet"
         */
         
-        $rowsSet = '(';
-        for ($i = 0; $i < count($columns); $i++) {
-            if ($i === 0) $rowsSet .= ":{$columns[$i]}";
-            else $rowsSet .= ", :{$columns[$i]}";
+        $valuesSet = '(';
+        for ($i = 0; $i < count($fields); $i++) {
+            if ($i === 0) $valuesSet .= ":{$fields[$i]}";
+            else $valuesSet .= ", :{$fields[$i]}";
         }
-        $rowsSet .= ')';
-        return $rowsSet;
+        $valuesSet .= ')';
+        return $valuesSet;
 
-        // $rowsSet = " (:column1, :column2, ...) "
+        // $valuesSet = " (:field1, :field2, ...) "
     }
-    public static function updateSet(array $columns): string {
+    public static function updateSet(array $fields): string {
         /*
         query = "UPDATE Table SET
-        column1 = :column1,
-        column2 = :column2,
-        column3 = :column3
+        field1 = :field1,
+        field2 = :field2,
+        field3 = :field3
         ...
         WHERE ..."
         
         after code:
         
         query = "UPDATE Table SET
-        $columnsSet
+        $fieldsSet
         WHERE ..."
         */
 
         $updateSet = '';
-        for ($i = 0; $i < count($columns); $i++) {
-            if ($i === 0) $updateSet .= "{$columns[$i]} = :{$columns[$i]}";
-            else $updateSet .= ", {$columns[$i]} = :{$columns[$i]}";
+        for ($i = 0; $i < count($fields); $i++) {
+            if ($i === 0) $updateSet .= "{$fields[$i]} = :{$fields[$i]}";
+            else $updateSet .= ", {$fields[$i]} = :{$fields[$i]}";
         }
         return $updateSet;
 
-        // $updateSet = " column1 = :column1, column2 = :column2, ... "
+        // $updateSet = " field1 = :field1, field2 = :field2, ... "
     }
-    public static function execArray(array $columns, array $rows): array {
+    public static function execArray(array $fields, array $values): array {
         /*
         $query->execute([
-            ':column1' => $row1,
-            ':column2' => $row2,
-            ':column3' => $row3,
-            ':column4' => $row4,
+            ':field1' => $value1,
+            ':field2' => $value2,
+            ':field3' => $value3,
+            ':field4' => $value4,
             ...
         ])
 
@@ -94,17 +94,17 @@ class PdoQuery {
         */
 
         $execArray = [];
-        for ($i = 0; $i < count($columns); $i++) {
-            $execArray[":{$columns[$i]}"] = $rows[$i];
+        for ($i = 0; $i < count($fields); $i++) {
+            $execArray[":{$fields[$i]}"] = $values[$i];
         }
         return $execArray;
 
         /*
         $execArray = [
-            ':column1' => $row1,
-            ':column2' => $row2,
-            ':column3' => $row3,
-            ':column4' => $row4,
+            ':field1' => $value1,
+            ':field2' => $value2,
+            ':field3' => $value3,
+            ':field4' => $value4,
             ...
         ]
         */

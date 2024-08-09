@@ -15,7 +15,7 @@ class BlogController extends Controller {
     }
 
     public function index() {
-        $categories = $this->posts::selectDistinctValuesByColumn('category');
+        $categories = $this->posts::selectColumn('category');
         $posts = $this->posts::selectAll();
 
         $view = new View('Blog/index', 'All posts');
@@ -26,7 +26,7 @@ class BlogController extends Controller {
     }
 
     public function category(string $category) {
-        $postsByCategory = $this->posts::selectManyByColumn('category', $category);
+        $postsByCategory = $this->posts::selectManyByField('category', $category);
         
         if (!$postsByCategory) {
             $this->error404();
